@@ -16,13 +16,16 @@ const config: Config = {
         secondary: {
           DEFAULT: '#1A2B3C',
         },
+        surface: '#F7FAFC',
+        'outline-variant': '#D0D7DE',
+        error: '#DC2626',
       },
       borderRadius: {
         'card': '12px',
       }
     },
-  },
-  plugins: [],
+  },  
+   plugins: []
 };
 
 export default config;
