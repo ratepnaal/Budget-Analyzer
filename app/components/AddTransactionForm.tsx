@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useAppDispatch , useAppSelector } from '../store/hooks';
 import { withdrawSYP , withdrawUSD } from '../store/walletSlice';
 import { CategoryType } from '../types';
+import { addTransaction } from '../store/transactionsSlice';
 
 export default function AddTransactionForm() {
 const dispatch = useAppDispatch();
@@ -26,6 +27,47 @@ dispatch(withdrawSYP(amount));
     setTitle('');
     setAmount(0);
     alert('تمت إضافة العملية بنجاح!');
+
+    // لوجيك السجل 
+
+    const rate = currentExchangeRate; 
+  let finalAmountUSD = 0;
+  let finalAmountSYP = 0;
+
+
+if (currency === 'SYP') {
+    dispatch(withdrawSYP(amount));
+    finalAmountSYP = amount;
+    finalAmountUSD = amount / rate; // حساب المعادل بالدولار للتقرير
+
+     } else {
+        dispatch(withdrawUSD(amount));
+        finalAmountUSD = amount;
+        finalAmountSYP = amount * rate; // حساب المعادل بالليرة للتقرير
+      }
+
+      // تصميم القيم في الفاتورة 
+
+  const newTransaction = {
+
+    id: Date.now().toString(), 
+    title,
+    amountUSD: finalAmountUSD,
+    amountSYP: finalAmountSYP,
+    exchangeRate: rate,
+    category,
+    date: new Date().toLocaleDateString('ar-EG'), // تاريخ اليوم بالصيغة العربية
+    isPending: false
+  };
+
+  // ارسال التقرير للسجل 
+
+    dispatch(addTransaction(newTransaction));
+
+// اعادة ضبط الحقول  
+
+   setTitle('');
+    setAmount(0);
 }
     return(
 <form onSubmit={handleSubmit} className="bg-white p-6 rounded-card shadow-sm border border-outline-variant max-w-md">
