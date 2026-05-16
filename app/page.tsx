@@ -4,6 +4,8 @@ import { depositUSD } from './store/walletSlice';
 import BalanceCards from './components/BalanceCards';
 import AddTransactionForm from './components/AddTransactionForm';
 import TransferForm from './components/TransferForm';
+import TransactionsHistory from './components/TransactionsHistory';
+
 
 export default function Home() {
   const dispatch = useAppDispatch();
@@ -38,7 +40,9 @@ export default function Home() {
           {/* نموذج إضافة الفاتورة (الذي يخصم مباشرة من الصندوق المحدد) */}
           <AddTransactionForm />
         </div>
-
+<div className="w-full">
+          <TransactionsHistory />
+        </div>
       </div>
     </main>
   );
