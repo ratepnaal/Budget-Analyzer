@@ -31,6 +31,11 @@ const basketSlice = createSlice({
     removeFromBasket: (state, action: PayloadAction<string>) => {
       state.items = state.items.filter(item => item.id !== action.payload);
     },
+
+hydrateBasket: (state, action: PayloadAction<[]>) => {
+  state.items = action.payload;
+},
+
     // تفريغ السلة بالكامل بعد نجاح عملية الترحيل
     clearBasket: (state) => {
       state.items = [];
@@ -40,5 +45,5 @@ const basketSlice = createSlice({
 
 const basketReducer = basketSlice.reducer;
 
-export const { addToBasket, removeFromBasket, clearBasket } = basketSlice.actions;
+export const { addToBasket, removeFromBasket, clearBasket , hydrateBasket } = basketSlice.actions;
 export default basketReducer;

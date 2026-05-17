@@ -1,5 +1,6 @@
 import { createSlice , PayloadAction } from "@reduxjs/toolkit";
 import { WalletState } from "../types";
+import { hydrateRoot } from "react-dom/client";
 
 // تحديد القيم الاولية للمحفظة 
 
@@ -10,6 +11,8 @@ const initialState : WalletState = {
     loansBalance:0,
     currentExchangeRate:14500
 }
+
+
 
 const WalletSlice = createSlice({
     name:'wallet',
@@ -56,6 +59,15 @@ const WalletSlice = createSlice({
                 state.sypBalance +=sypEquivalent
             }
         },
+
+        // لحفظ البيانات داخل localstorage 
+
+hytdrateWalle: (state, action: PayloadAction<{ usdBalance: number; sypBalance: number; currentExchangeRate: number }>) => {
+  state.usdBalance = action.payload.usdBalance;
+  state.sypBalance = action.payload.sypBalance;
+  state.currentExchangeRate = action.payload.currentExchangeRate;
+},
+
     }
 })
 
@@ -67,7 +79,9 @@ export const {
   withdrawUSD, 
   depositSYP, 
   withdrawSYP, 
-  transferUsdToSyp 
+  transferUsdToSyp,
+  hytdrateWalle 
+  
 } = WalletSlice.actions;
 
 export default walletReducer;

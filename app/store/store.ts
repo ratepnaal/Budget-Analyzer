@@ -12,5 +12,19 @@ export const store = configureStore({
     }
 })
 
+// نقوم بالفحص أولاً للتأكد أن الكود يعمل داخل المتصفح وليس الخادم
+
+if (typeof window !== 'undefined') {
+  store.subscribe(() => {
+    const state = store.getState();
+    
+    // حفظ كل قسم تحت مفتاح مخصص بصيغة نصوص JSON
+    
+    localStorage.setItem('wallet_data', JSON.stringify(state.wallet));
+    localStorage.setItem('transactions_data', JSON.stringify(state.transactions.list));
+    localStorage.setItem('basket_data', JSON.stringify(state.basket.items));
+  });
+}
+
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;

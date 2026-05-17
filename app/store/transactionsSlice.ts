@@ -18,10 +18,17 @@ const transactionsSlice = createSlice({
     addTransaction: (state, action: PayloadAction<Transaction>) => {
       state.list.unshift(action.payload);
     },
+
+            // لحفظ البيانات داخل localstorage 
+
+
+    hydrateTransactions: (state, action: PayloadAction<[]>) => {
+  state.list = action.payload;
+},
   },
 });
 
 const transactionsReducer = transactionsSlice.reducer;
 
-export const { addTransaction } = transactionsSlice.actions;
+export const { addTransaction , hydrateTransactions } = transactionsSlice.actions;
 export default transactionsReducer;
