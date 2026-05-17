@@ -19,8 +19,9 @@ const WalletSlice = createSlice({
         // دالة المعادل بين العملتين 
 
         updateExchangeRate:(state , action: PayloadAction<number>)=>{
-            state.currentExchangeRate = action.payload;
-        },
+         if (action.payload > 0) {
+      state.currentExchangeRate = action.payload;
+    }},
 
         // دالة ايداع مبلغ بالسوري ودالة الايداع بالدولار
 
@@ -54,7 +55,7 @@ const WalletSlice = createSlice({
                 state.usdBalance-=usdAmount;
                 state.sypBalance +=sypEquivalent
             }
-        }
+        },
     }
 })
 

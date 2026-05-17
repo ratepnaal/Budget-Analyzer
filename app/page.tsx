@@ -6,7 +6,7 @@ import AddTransactionForm from './components/AddTransactionForm';
 import TransferForm from './components/TransferForm';
 import TransactionsHistory from './components/TransactionsHistory';
 import PendingBasket from './components/PendingBasket';
-
+import Settings from './components/Settings';
 
 export default function Home() {
   const dispatch = useAppDispatch();
@@ -48,7 +48,11 @@ export default function Home() {
         <div className="lg:col-span-1">
             <PendingBasket />
           </div>
-          
+
+          <div className="max-w-md">
+            <Settings />
+          </div>
+
       </div>
     </main>
   );
