@@ -1,12 +1,13 @@
 import { configureStore } from "@reduxjs/toolkit";
 import walletReducer from "./walletSlice";
 import transactionsReducer from "./transactionsSlice";
-
+import basketReducer from "./basketSlice";
 
 export const store = configureStore({
     reducer:{
         wallet:walletReducer,
         transactions: transactionsReducer,
+        basket: basketReducer, 
     }
 })
 

@@ -5,6 +5,7 @@ import BalanceCards from './components/BalanceCards';
 import AddTransactionForm from './components/AddTransactionForm';
 import TransferForm from './components/TransferForm';
 import TransactionsHistory from './components/TransactionsHistory';
+import PendingBasket from './components/PendingBasket';
 
 
 export default function Home() {
@@ -43,6 +44,11 @@ export default function Home() {
 <div className="w-full">
           <TransactionsHistory />
         </div>
+
+        <div className="lg:col-span-1">
+            <PendingBasket />
+          </div>
+          
       </div>
     </main>
   );

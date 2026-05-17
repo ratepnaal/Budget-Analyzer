@@ -5,6 +5,7 @@ import { useAppDispatch , useAppSelector } from '../store/hooks';
 import { withdrawSYP , withdrawUSD } from '../store/walletSlice';
 import { CategoryType } from '../types';
 import { addTransaction } from '../store/transactionsSlice';
+import { addToBasket , BasketItem } from '../store/basketSlice';
 
 export default function AddTransactionForm() {
 const dispatch = useAppDispatch();
@@ -17,37 +18,19 @@ const { currentExchangeRate } = useAppSelector((state) => state.wallet);
   const [category, setCategory] = useState<CategoryType>('اساسي');
 
   const handleSubmit = (e:React.FormEvent)=>{
+
 e.preventDefault(); 
-  
-  const rate = currentExchangeRate; 
-  let finalAmountUSD = 0;
-  let finalAmountSYP = 0;
 
-
-  if (currency === 'SYP') {
-    dispatch(withdrawSYP(amount));
-    finalAmountSYP = amount;
-    finalAmountUSD = amount / rate; 
-  } else {
-    dispatch(withdrawUSD(amount)); 
-    finalAmountUSD = amount;
-    finalAmountSYP = amount * rate; 
-  }
-
-  // بناء الفاتورة للسجل
-  const newTransaction = {
+const newItem: BasketItem = {
     id: Date.now().toString(), 
     title,
-    amountUSD: finalAmountUSD,
-    amountSYP: finalAmountSYP,
-    exchangeRate: rate,
+    amount,
+    currency,
     category,
-    date: new Date().toLocaleDateString('ar-EG'),
-    isPending: false
   };
 
-  dispatch(addTransaction(newTransaction));
-
+  dispatch(addToBasket(newItem));
+  
   // إعادة ضبط الحقول
   setTitle('');
   setAmount(0);
