@@ -7,6 +7,8 @@ import TransferForm from './components/TransferForm';
 import TransactionsHistory from './components/TransactionsHistory';
 import PendingBasket from './components/PendingBasket';
 import Settings from './components/Settings';
+import Analytics from './components/Analytics';
+import ExpenseBarChart from './components/ExpenseBarChart';
 
 export default function Home() {
   const dispatch = useAppDispatch();
@@ -52,6 +54,11 @@ export default function Home() {
           <div className="max-w-md">
             <Settings />
           </div>
+
+          <div className="lg:col-span-1">
+    <Analytics />
+    <ExpenseBarChart/>
+  </div>
 
       </div>
     </main>
