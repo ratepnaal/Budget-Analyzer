@@ -53,7 +53,8 @@ export default function PendingBasket() {
         exchangeRate: currentExchangeRate,
         category: item.category as CategoryType ,
         date: new Date().toLocaleDateString('ar-EG'),
-        isPending: false
+        isPending: false,
+        currency: item.currency
       }));
     });
 

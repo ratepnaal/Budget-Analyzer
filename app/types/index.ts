@@ -14,6 +14,7 @@ export interface Transaction {
     category: CategoryType;
     date: string;
     isPending: boolean;
+    currency:string;
 }
 
 // تمثيل حالة الصناديق الأربعة

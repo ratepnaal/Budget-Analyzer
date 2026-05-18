@@ -1,9 +1,39 @@
 'use client';
-import { useAppSelector } from "../store/hooks";
+import { useAppSelector , useAppDispatch } from "../store/hooks";
 import { CategoryType } from "../types";
+import { refundSYP , refundUSD  } from "../store/walletSlice";
+import { deleteTransaction } from "../store/transactionsSlice";
+import { Transaction } from "../types";
 
 export default function TransactionsHistory() {
       const transactions = useAppSelector((state) => state.transactions.list);
+      const dispatch = useAppDispatch();
+
+      const handleDeleteClick = (tx:Transaction) => {
+console.log("الفاتورة المراد حذفها تحتوي على البيانات التالية:", tx);
+
+          const confirmDelete = window.confirm(`هل أنت متأكد من رغبتك في حذف عملية "${tx.title}" والتراجع عن خصمها المالي؟`);
+          
+          if (confirmDelete) {
+            // 1. هندسة الـ Rollback: التحقق من العملة الأصلية للفاتورة لرد المبلغ للصندوق الصحيح
+            if (tx.currency === 'SYP') {
+
+                    alert(`تم رد مبلغ ${tx.amountSYP} ل.س إلى صندوق الليرة`);
+              
+              // إذا كانت بالليرة، نرد القيمة الأصلية كاملة لصندوق الليرة
+              dispatch(refundSYP(tx.amountSYP));
+            } else {
+              // إذا كانت بالدولار، نرد القيمة الأصلية كاملة لصندوق الدولار
+              
+                    alert(`تم رد مبلغ ${tx.amountUSD} $ إلى صندوق الدولار`);
+              
+              dispatch(refundUSD(tx.amountUSD));
+            }
+      
+            // 2. حذف الفاتورة نهائياً من السجل التاريخي
+            dispatch(deleteTransaction(tx.id));
+          }
+        };
 
       const getCategoryColor = (category: CategoryType) => {
           switch (category) {
@@ -64,6 +94,22 @@ export default function TransactionsHistory() {
                       معادل: {Math.round(tx.amountSYP).toLocaleString()} ل.س
                     </p>
                   </div>
+
+                {/* زر التراجع والحذف الأحمر */}
+                <button
+                  onClick={() => handleDeleteClick(tx)}
+                  className="text-error hover:bg-red-50 p-2 rounded-full transition-all"
+                  title="حذف العملية واسترداد المبلغ"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+                  </svg>
+                </button>
+
+
+
+
+
     
                 </div>
               ))}

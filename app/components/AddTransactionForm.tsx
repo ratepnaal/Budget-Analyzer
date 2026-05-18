@@ -1,15 +1,12 @@
 'use client';
 
 import { useState } from 'react';
-import { useAppDispatch , useAppSelector } from '../store/hooks';
-import { withdrawSYP , withdrawUSD } from '../store/walletSlice';
+import { useAppDispatch } from '../store/hooks';
 import { CategoryType } from '../types';
-import { addTransaction } from '../store/transactionsSlice';
 import { addToBasket , BasketItem } from '../store/basketSlice';
 
 export default function AddTransactionForm() {
 const dispatch = useAppDispatch();
-const { currentExchangeRate } = useAppSelector((state) => state.wallet);
 
 
   const [title, setTitle] = useState('');

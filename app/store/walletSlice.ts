@@ -1,6 +1,5 @@
 import { createSlice , PayloadAction } from "@reduxjs/toolkit";
 import { WalletState } from "../types";
-import { hydrateRoot } from "react-dom/client";
 
 // تحديد القيم الاولية للمحفظة 
 
@@ -68,6 +67,14 @@ hytdrateWalle: (state, action: PayloadAction<{ usdBalance: number; sypBalance: n
   state.currentExchangeRate = action.payload.currentExchangeRate;
 },
 
+ refundUSD: (state, action: PayloadAction<number>) => {
+    state.usdBalance += action.payload;
+  },
+
+  refundSYP: (state, action: PayloadAction<number>) => {
+      state.sypBalance += action.payload;
+    },
+
     }
 })
 
@@ -80,7 +87,9 @@ export const {
   depositSYP, 
   withdrawSYP, 
   transferUsdToSyp,
-  hytdrateWalle 
+  hytdrateWalle,
+  refundSYP,
+  refundUSD
   
 } = WalletSlice.actions;
 

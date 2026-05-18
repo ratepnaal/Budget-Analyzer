@@ -25,10 +25,15 @@ const transactionsSlice = createSlice({
     hydrateTransactions: (state, action: PayloadAction<[]>) => {
   state.list = action.payload;
 },
+
+ deleteTransaction: (state, action: PayloadAction<string>) => {
+    state.list = state.list.filter(tx => tx.id !== action.payload);
+  },
+
   },
 });
 
 const transactionsReducer = transactionsSlice.reducer;
 
-export const { addTransaction , hydrateTransactions } = transactionsSlice.actions;
+export const { addTransaction , hydrateTransactions , deleteTransaction } = transactionsSlice.actions;
 export default transactionsReducer;
