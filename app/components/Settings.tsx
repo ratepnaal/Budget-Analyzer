@@ -1,7 +1,7 @@
 'use client';
 import { useState } from 'react';
-import { useAppDispatch , useAppSelector } from '../store/hooks';
-import { updateExchangeRate } from '../store/walletSlice';
+import { useAppDispatch , useAppSelector } from '@/store/hooks';
+import { updateExchangeRate } from '@/store/walletSlice';
 
 export default function Settings() {
   const dispatch = useAppDispatch();

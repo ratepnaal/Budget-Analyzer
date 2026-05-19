@@ -1,9 +1,9 @@
 'use client';
-import { useAppDispatch , useAppSelector } from '../store/hooks';
-import { removeFromBasket , clearBasket } from '../store/basketSlice';
-import { withdrawSYP , withdrawUSD } from '../store/walletSlice';
-import { addTransaction } from '../store/transactionsSlice';
-import { CategoryType } from '../types';
+import { useAppDispatch , useAppSelector } from '@/store/hooks';
+import { removeFromBasket , clearBasket } from '@/store/basketSlice';
+import { withdrawSYP , withdrawUSD } from '@/store/walletSlice';
+import { addTransaction } from '@/store/transactionsSlice';
+import { CategoryType } from '@/types';
 
 export default function PendingBasket() {
   const dispatch = useAppDispatch();

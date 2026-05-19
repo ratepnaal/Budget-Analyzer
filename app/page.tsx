@@ -1,6 +1,6 @@
 'use client';
-import { useAppDispatch } from './store/hooks';
-import { depositUSD } from './store/walletSlice';
+import { useAppDispatch } from '@/store/hooks';
+import { depositUSD } from '@/store/walletSlice';
 import BalanceCards from './components/BalanceCards';
 import AddTransactionForm from './components/AddTransactionForm';
 import TransferForm from './components/TransferForm';

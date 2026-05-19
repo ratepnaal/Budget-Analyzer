@@ -1,6 +1,6 @@
 'use client';
-import { useAppSelector } from "../store/hooks";
-import { CategoryType } from "../types";
+import { useAppSelector } from "@/store/hooks";
+import { CategoryType } from "@/types";
 
 export default function Analytics() {
   // 1. جلب العمليات الحالية من المخزن المركزي

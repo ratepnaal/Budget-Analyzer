@@ -1,7 +1,7 @@
 'use client';
 import { useState } from 'react';
-import { useAppDispatch , useAppSelector  } from '../store/hooks';
-import { transferUsdToSyp } from '../store/walletSlice';
+import { useAppDispatch , useAppSelector  } from '@/store/hooks';
+import { transferUsdToSyp } from '@/store/walletSlice';
 
 export default function TransferForm() {
 const dispatch = useAppDispatch();

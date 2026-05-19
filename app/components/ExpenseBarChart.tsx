@@ -1,6 +1,6 @@
 'use client';
-import { useAppSelector } from "../store/hooks";
-import { CategoryType } from "../types";
+import { useAppSelector } from "@/store/hooks";
+import { CategoryType } from "@/types";
 
 export default function ExpenseBarChart() {
   const transactions = useAppSelector((state) => state.transactions.list);

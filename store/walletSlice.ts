@@ -1,7 +1,5 @@
 import { createSlice , PayloadAction } from "@reduxjs/toolkit";
-import { WalletState } from "../types";
-
-// تحديد القيم الاولية للمحفظة 
+import { WalletState } from "@/types";
 
 const initialState : WalletState = {
     usdBalance:0,
@@ -11,21 +9,14 @@ const initialState : WalletState = {
     currentExchangeRate:14500
 }
 
-
-
 const WalletSlice = createSlice({
     name:'wallet',
     initialState,
     reducers:{
-
-        // دالة المعادل بين العملتين 
-
         updateExchangeRate:(state , action: PayloadAction<number>)=>{
          if (action.payload > 0) {
       state.currentExchangeRate = action.payload;
     }},
-
-        // دالة ايداع مبلغ بالسوري ودالة الايداع بالدولار
 
         depositUSD:(state , action: PayloadAction<number>)=>{
             state.usdBalance += action.payload;
@@ -35,8 +26,6 @@ const WalletSlice = createSlice({
             state.sypBalance += action.payload;
         },
 
-        //دالة السحب من المبلغ بالدولار ودالة السحب بالسوري 
-
         withdrawUSD:(state , action:PayloadAction<number>)=>{
             state.usdBalance -= action.payload;
         },
@@ -45,21 +34,15 @@ const WalletSlice = createSlice({
             state.sypBalance -= action.payload;
         },
 
-        // دالة التحويل من الدولار الى السوري 
-
         transferUsdToSyp:(state , action:PayloadAction<number>)=>{
             const usdAmount = action.payload;
             const sypEquivalent = usdAmount * state.currentExchangeRate;
-
-            // اذا كان المبلغ الذي نرغب بتحويله اصغر من الكلي نقص هذا المبلغ من الصندوق الرئيسي وزده للصندوق السوري 
 
             if(state.usdBalance >= usdAmount){
                 state.usdBalance-=usdAmount;
                 state.sypBalance +=sypEquivalent
             }
         },
-
-        // لحفظ البيانات داخل localstorage 
 
 hytdrateWalle: (state, action: PayloadAction<{ usdBalance: number; sypBalance: number; currentExchangeRate: number }>) => {
   state.usdBalance = action.payload.usdBalance;
@@ -90,7 +73,6 @@ export const {
   hytdrateWalle,
   refundSYP,
   refundUSD
-  
 } = WalletSlice.actions;
 
 export default walletReducer;

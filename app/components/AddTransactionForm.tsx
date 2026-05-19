@@ -1,9 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { useAppDispatch } from '../store/hooks';
-import { CategoryType } from '../types';
-import { addToBasket , BasketItem } from '../store/basketSlice';
+import { useAppDispatch } from '@/store/hooks';
+import { CategoryType } from '@/types';
+import { addToBasket , BasketItem } from '@/store/basketSlice';
 
 export default function AddTransactionForm() {
 const dispatch = useAppDispatch();

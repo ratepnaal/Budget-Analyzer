@@ -1,5 +1,5 @@
 'use client'
-import { useAppSelector } from "../store/hooks"
+import { useAppSelector } from "@/store/hooks"
 
 export default function BalanceCards (){
     const { usdBalance, sypBalance, savingsBalance, loansBalance } = useAppSelector((state) => state.wallet);

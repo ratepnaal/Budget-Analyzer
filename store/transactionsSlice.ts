@@ -1,7 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { Transaction } from '../types';
-
-//  الحالة الابتدائية للسجل: مصفوفة فارغة في البداية
+import { Transaction } from '@/types';
 
 interface TransactionsState {
   list: Transaction[];
@@ -19,16 +17,13 @@ const transactionsSlice = createSlice({
       state.list.unshift(action.payload);
     },
 
-            // لحفظ البيانات داخل localstorage 
-
-
     hydrateTransactions: (state, action: PayloadAction<[]>) => {
-  state.list = action.payload;
-},
+      state.list = action.payload;
+    },
 
- deleteTransaction: (state, action: PayloadAction<string>) => {
-    state.list = state.list.filter(tx => tx.id !== action.payload);
-  },
+    deleteTransaction: (state, action: PayloadAction<string>) => {
+      state.list = state.list.filter(tx => tx.id !== action.payload);
+    },
 
   },
 });

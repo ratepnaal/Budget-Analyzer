@@ -1,10 +1,10 @@
 'use client';
 import { useState } from 'react';
-import { useAppSelector , useAppDispatch } from '../store/hooks';
-import { deleteTransaction } from '../store/transactionsSlice';
-import { refundSYP, refundUSD } from '../store/walletSlice';
-import { CategoryType } from '../types';
-import { Transaction } from '../types';
+import { useAppSelector , useAppDispatch } from '@/store/hooks';
+import { deleteTransaction } from '@/store/transactionsSlice';
+import { refundSYP, refundUSD } from '@/store/walletSlice';
+import { CategoryType } from '@/types';
+import { Transaction } from '@/types';
 
 export default function TransactionsHistory() {
   const dispatch = useAppDispatch();
