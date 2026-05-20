@@ -1,64 +1,110 @@
+// app/components/PendingBasket.tsx
 'use client';
-import { useAppDispatch , useAppSelector } from '@/store/hooks';
-import { removeFromBasket , clearBasket } from '@/store/basketSlice';
-import { withdrawSYP , withdrawUSD } from '@/store/walletSlice';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import { removeFromBasket, clearBasket } from '@/store/basketSlice';
+import { withdrawSYP, withdrawUSD, addToSavings } from '@/store/walletSlice';
 import { addTransaction } from '@/store/transactionsSlice';
 import { CategoryType } from '@/types';
 
 export default function PendingBasket() {
   const dispatch = useAppDispatch();
-  
-  // 1. جلب العناصر الحالية من السلة وسعر الصرف من محفظة الـ Redux
-  const basketItems = useAppSelector((state) => state.basket.items);
-  const { currentExchangeRate } = useAppSelector((state) => state.wallet);
 
-  // 2. حساب المجاميع الحية لعرضها في أسفل السلة قبل الترحيل
+  // جلب العناصر الحالية من السلة وبيانات المحفظة
+  const basketItems = useAppSelector((state) => state.basket.items);
+  const { currentExchangeRate, sypBalance, usdBalance } = useAppSelector((state) => state.wallet);
+
+  // حساب المجاميع حسب العملة
   const totalSYP = basketItems
-    .filter(item => item.currency === 'SYP')
+    .filter((item) => item.currency === 'SYP')
     .reduce((sum, item) => sum + item.amount, 0);
 
   const totalUSD = basketItems
-    .filter(item => item.currency === 'USD')
+    .filter((item) => item.currency === 'USD')
     .reduce((sum, item) => sum + item.amount, 0);
 
-  // 3. دالة الترحيل الكبرى (The Commit Function)
+  // تحقق من إمكانية الدفع دون الوصول إلى رصيد سالب
+  const canAfford = (): { ok: boolean; message?: string } => {
+    if (totalSYP > sypBalance) {
+      return { ok: false, message: `رصيد الليرة المتبقي: ${sypBalance.toLocaleString()} ل.س` };
+    }
+
+    if (totalUSD > usdBalance) {
+      return { ok: false, message: `رصيد الدولار المتبقي: ${usdBalance.toLocaleString()} $` };
+    }
+
+    return { ok: true };
+  };
+
   const handleCheckout = () => {
     if (basketItems.length === 0) return;
 
-    // المرور على كل فاتورة معلقة ومعالجتها بدقة بشكل منفصل
+    const affordability = canAfford();
+    if (!affordability.ok) {
+      alert(affordability.message);
+      return;
+    }
+
+    // ترحيل كل عنصر: احسب الخصم الصحيح، وتعامل مع فئة الادخار بشكل منفصل
     basketItems.forEach((item) => {
+      const categoryNormalized = String(item.category || '').trim();
+
+      // إذا كانت الفاتورة تصنف كـ "ادخار"، نضيف المبلغ لصندوق الادخار بدلاً من خصمه من الحساب
+      if (categoryNormalized === 'ادخار') {
+        // نحسب الادخار بوحدة الليرة إن كانت العملة ليرة، أو نحوله إلى ليرة إن كان بالدولار
+        if (item.currency === 'SYP') {
+          dispatch(addToSavings(item.amount));
+        } else {
+          // USD -> convert to SYP then add to savings
+          dispatch(addToSavings(item.amount * currentExchangeRate));
+        }
+
+        // لا نخصم من الرصيد هنا لأن الادخار يُسجل في صندوق الادخار، حسب متطلباتك
+
+        // سجل المعاملة كتحويل إلى الادخار
+        dispatch(
+          addTransaction({
+            id: item.id,
+            title: item.title,
+            amountUSD: item.currency === 'USD' ? item.amount : item.amount / currentExchangeRate,
+            amountSYP: item.currency === 'SYP' ? item.amount : item.amount * currentExchangeRate,
+            exchangeRate: currentExchangeRate,
+            category: item.category as CategoryType,
+            date: new Date().toLocaleDateString('ar-EG'),
+            isPending: false,
+            currency: item.currency,
+          })
+        );
+        return;
+      }
+
+      // العادة: خصم المبلغ من المحفظة المناسبة
       let finalAmountUSD = 0;
       let finalAmountSYP = 0;
 
       if (item.currency === 'SYP') {
-   // الخصم حصراً من صندوق الليرة المنفصل 
-
         dispatch(withdrawSYP(item.amount));
         finalAmountSYP = item.amount;
-        finalAmountUSD = item.amount / currentExchangeRate; // المعادل للتقارير
+        finalAmountUSD = item.amount / currentExchangeRate;
       } else {
-        // الخصم حصراً من صندوق الدولار
-
         dispatch(withdrawUSD(item.amount));
         finalAmountUSD = item.amount;
-        finalAmountSYP = item.amount * currentExchangeRate; // المعادل للتقارير
+        finalAmountSYP = item.amount * currentExchangeRate;
       }
 
-      // تحويل الفاتورة المعلقة إلى فاتورة رسمية في السجل التاريخي
-        dispatch(addTransaction({
-        id: item.id,
-        title: item.title,
-        amountUSD: finalAmountUSD,
-        amountSYP: finalAmountSYP,
-        exchangeRate: currentExchangeRate,
-        category: item.category as CategoryType ,
-        date: new Date().toLocaleDateString('ar-EG'),
-        isPending: false,
-        currency: item.currency
-      }));
+      dispatch(
+        addTransaction({
+          id: item.id,
+          title: item.title,
+          amountUSD: finalAmountUSD,
+          amountSYP: finalAmountSYP,
+          exchangeRate: currentExchangeRate,
+          category: item.category as CategoryType,
+          date: new Date().toLocaleDateString('ar-EG'),
+          isPending: false,
+          currency: item.currency,
+        })
+      );
     });
-
-    // بعد ترحيل كافة الفواتير بنجاح، نقوم بتفريغ السلة تماماً
 
     dispatch(clearBasket());
     alert('تم ترحيل كافة الفواتير المعلقة وتحديث الصناديق والسجل بنجاح!');
@@ -79,8 +125,7 @@ export default function PendingBasket() {
         </div>
       ) : (
         <div className="space-y-4">
-          {/* قائمة العناصر المعلقة */}
-          <div className="space-y-2 max-h-62.5 overflow-y-auto">
+          <div className="space-y-2 max-h-[250px] overflow-y-auto">
             {basketItems.map((item) => (
               <div key={item.id} className="flex justify-between items-center p-3 bg-surface rounded-lg border border-gray-50 text-sm">
                 <div>
@@ -91,8 +136,7 @@ export default function PendingBasket() {
                   <p className="font-bold text-secondary">
                     {item.amount.toLocaleString()} {item.currency === 'SYP' ? 'ل.س' : '$'}
                   </p>
-                  {/* زر حذف عنصر من السلة في حال التراجع */}
-                  <button 
+                  <button
                     onClick={() => dispatch(removeFromBasket(item.id))}
                     className="text-error hover:text-red-700 font-bold px-2 py-1 rounded transition-colors text-xs"
                   >
@@ -103,7 +147,6 @@ export default function PendingBasket() {
             ))}
           </div>
 
-          {/* ملخص المجاميع المعلقة قبل تأكيد الخصم */}
           <div className="bg-surface-container p-4 rounded-lg space-y-1.5 text-xs text-secondary border border-outline-variant">
             <p className="font-bold mb-1 text-sm text-secondary">المجموع المطلوب ترحيله الخصم:</p>
             {totalSYP > 0 && (
@@ -120,7 +163,6 @@ export default function PendingBasket() {
             )}
           </div>
 
-          {/* زر الترحيل النهائي الفعال */}
           <button
             onClick={handleCheckout}
             className="w-full bg-primary hover:bg-primary-dark text-white font-bold py-3 rounded-md transition-all shadow-md shadow-primary/10"
