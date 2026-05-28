@@ -81,17 +81,18 @@ export default function PendingBasket() {
     basketItems.forEach((item) => {
       const categoryNormalized = String(item.category || '').trim();
 
-      // إذا كانت الفاتورة تصنف كـ "ادخار"، نضيف المبلغ لصندوق الادخار بدلاً من خصمه من الحساب
+      // إذا كانت الفاتورة تصنف كـ "ادخار"، نخصم من الحساب ونضيف لصندوق الادخار بوحدة الدولار دائماً
       if (categoryNormalized === 'ادخار') {
-        // نحسب الادخار بوحدة الليرة إن كانت العملة ليرة، أو نحوله إلى ليرة إن كان بالدولار
+        let savedUSD = 0;
         if (item.currency === 'SYP') {
-          dispatch(addToSavings(item.amount));
+          dispatch(withdrawSYP(item.amount));
+          savedUSD = item.amount / currentExchangeRate;
         } else {
-          // USD -> convert to SYP then add to savings
-          dispatch(addToSavings(item.amount * currentExchangeRate));
+          dispatch(withdrawUSD(item.amount));
+          savedUSD = item.amount;
         }
-
-        // لا نخصم من الرصيد هنا لأن الادخار يُسجل في صندوق الادخار، حسب متطلباتك
+        
+        dispatch(addToSavings(savedUSD));
 
         // سجل المعاملة كتحويل إلى الادخار
         dispatch(
@@ -160,6 +161,30 @@ export default function PendingBasket() {
 
         return;
       }
+
+      // معالجة الفواتير العادية وباقي التصنيفات
+      if (item.currency === 'SYP') {
+        dispatch(withdrawSYP(item.amount));
+      } else {
+        dispatch(withdrawUSD(item.amount));
+      }
+
+      // إذا كانت الفاتورة عبارة عن استدانة (فقط كتوثيق بدون إضافة للصندوق، أو إذا كانت تضيف للصندوق يمكننا تخصيصها مستقبلاً)
+      // لكن حاليا نعتبرها تسحب من الصندوق كأي فاتورة أخرى أو تضاف، لكن بناء على القواعد الطبيعية هي مجرد عملية شراء
+      
+      dispatch(
+        addTransaction({
+          id: item.id,
+          title: item.title,
+          amountUSD: item.currency === 'USD' ? item.amount : item.amount / currentExchangeRate,
+          amountSYP: item.currency === 'SYP' ? item.amount : item.amount * currentExchangeRate,
+          exchangeRate: currentExchangeRate,
+          category: item.category as CategoryType,
+          date: new Date().toLocaleDateString('ar-EG'),
+          isPending: false,
+          currency: item.currency,
+        })
+      );
     });
 
     dispatch(clearBasket());
