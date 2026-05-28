@@ -81,6 +81,15 @@ const WalletSlice = createSlice({
             }
         },
 
+        // Repay a loan -> decrease loans (debt). Amount is in USD.
+        repayLoan: (state, action: PayloadAction<number>) => {
+            const amount = action.payload;
+            if (amount > 0) {
+                state.loansBalance -= amount;
+                if (state.loansBalance < 0) state.loansBalance = 0;
+            }
+        },
+
         // New: add to savings (SYP or USD normalized to SYP by rate if needed outside)
         addToSavings: (state, action: PayloadAction<number>) => {
             const amount = action.payload;
@@ -104,6 +113,7 @@ export const {
     refundSYP,
     refundUSD,
     takeLoan,
+    repayLoan,
     addToSavings,
 } = WalletSlice.actions;
 

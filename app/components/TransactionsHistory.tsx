@@ -5,10 +5,13 @@ import { deleteTransaction } from '@/store/transactionsSlice';
 import { refundSYP, refundUSD } from '@/store/walletSlice';
 import { CategoryType } from '@/types';
 import { Transaction } from '@/types';
+import { addNotification } from '@/store/notificationsSlice';
+import ConfirmDialog from './ConfirmDialog';
 
 export default function TransactionsHistory() {
   const dispatch = useAppDispatch();
   const transactions = useAppSelector((state) => state.transactions.list);
+  const [confirmState, setConfirmState] = useState<{ open: boolean; tx: Transaction | null }>({ open: false, tx: null });
 
   // 1. حالات الفلترة المحلية (Local States for Filtering)
   const [searchTerm, setSearchTerm] = useState('');
@@ -18,16 +21,21 @@ export default function TransactionsHistory() {
 
   
   const handleDeleteClick = (tx:Transaction) => {
-    const confirmDelete = window.confirm(`هل أنت متأكد من رغبتك في حذف عملية "${tx.title}" والتراجع عن خصمها المالي؟`);
-    
-    if (confirmDelete) {
+    setConfirmState({ open: true, tx });
+  };
+
+  const handleConfirmDelete = () => {
+    const tx = confirmState.tx;
+    if (tx) {
       if (tx.currency === 'SYP') {
         dispatch(refundSYP(tx.amountSYP));
       } else if (tx.currency === 'USD') {
         dispatch(refundUSD(tx.amountUSD));
       }
       dispatch(deleteTransaction(tx.id));
+      dispatch(addNotification({ type: 'success', message: 'تم حذف العملية واسترداد المبلغ', duration: 3000 }));
     }
+    setConfirmState({ open: false, tx: null });
   };
 
   // 2. هندسة الفلترة المتسلسلة (Pipeline Filtering)
@@ -47,22 +55,22 @@ const matchesCategory = selectedCategory === 'all' || (tx.category && tx.categor
 
   const getCategoryColor = (category: CategoryType) => {
     switch (category?.trim()) {
-      case 'اساسي': return 'bg-emerald-100 text-emerald-800';
-      case 'ثانوي': return 'bg-blue-100 text-blue-800';
-      case 'ادخار': return 'bg-purple-100 text-purple-800';
-      case 'ديون': return 'bg-red-100 text-red-800 border border-red-200';
-      case 'سد ديون': return 'bg-orange-100 text-orange-800';
-      case 'اعدام': return 'bg-gray-100 text-gray-800 line-through';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'اساسي': return 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300';
+      case 'ثانوي': return 'bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-300';
+      case 'ادخار': return 'bg-purple-100 text-purple-800 dark:bg-purple-900/40 dark:text-purple-300';
+      case 'ديون': return 'bg-red-100 text-red-800 border border-red-200 dark:bg-red-900/40 dark:text-red-300 dark:border-red-900/50';
+      case 'سد ديون': return 'bg-orange-100 text-orange-800 dark:bg-orange-900/40 dark:text-orange-300';
+      case 'اعدام': return 'bg-gray-100 text-gray-800 line-through dark:bg-slate-800 dark:text-slate-200';
+      default: return 'bg-gray-100 text-gray-800 dark:bg-slate-800 dark:text-slate-200';
     }
   };
 
   return (
-    <div className="bg-white p-6 rounded-card shadow-sm border border-outline-variant w-full">
+    <div className="w-full rounded-3xl border border-outline-variant bg-surface p-6 shadow-sm">
       <h2 className="text-xl font-bold text-secondary mb-3.75">سجل العمليات التاريخي</h2>
 
       {/* شريط أدوات الفلترة والبحث المتقدم (شاشة scannable واضحة) */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-5 bg-surface p-3 rounded-xl border border-gray-100">
+      <div className="mb-5 grid grid-cols-1 gap-3 rounded-2xl border border-outline-variant bg-surface-container p-4 md:grid-cols-3">
         
         {/* حقل البحث النصي */}
         <div>
@@ -72,7 +80,7 @@ const matchesCategory = selectedCategory === 'all' || (tx.category && tx.categor
             placeholder="مثال: شراء كتب..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full text-xs p-2 rounded-md border border-gray-200 focus:border-primary focus:ring-1 focus:ring-primary outline-none"
+            className="w-full rounded-xl border border-outline-variant bg-surface p-3 text-xs outline-none focus:border-primary dark:bg-secondary/10"
           />
         </div>
 
@@ -82,7 +90,7 @@ const matchesCategory = selectedCategory === 'all' || (tx.category && tx.categor
           <select
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
-            className="w-full text-xs p-2 rounded-md border border-gray-200 focus:border-primary focus:ring-1 focus:ring-primary outline-none bg-white"
+            className="w-full rounded-xl border border-outline-variant bg-surface p-3 text-xs outline-none focus:border-primary dark:bg-slate-800 dark:text-white"
           >
             <option value="all">كل التصنيفات</option>
             <option value="اساسي">اساسي</option>
@@ -100,7 +108,7 @@ const matchesCategory = selectedCategory === 'all' || (tx.category && tx.categor
           <select
             value={selectedCurrency}
             onChange={(e) => setSelectedCurrency(e.target.value)}
-            className="w-full text-xs p-2 rounded-md border border-gray-200 focus:border-primary focus:ring-1 focus:ring-primary outline-none bg-white"
+            className="w-full rounded-xl border border-outline-variant bg-surface p-3 text-xs outline-none focus:border-primary dark:bg-slate-800 dark:text-white"
           >
             <option value="all">كل الصناديق (الكل)</option>
             <option value="USD">صندوق الدولار ($)</option>
@@ -112,17 +120,17 @@ const matchesCategory = selectedCategory === 'all' || (tx.category && tx.categor
 
       {/* عرض الفواتير المفلترة */}
       {filteredTransactions.length === 0 ? (
-        <div className="text-center py-12 text-gray-400 text-sm">
+        <div className="py-12 text-center text-sm text-gray-400">
           {transactions.length === 0 
             ? "لا توجد أي عمليات مسجلة حتى الآن." 
             : "لم يتم العثور على عمليات تطابق خيارات البحث الحالية!"}
         </div>
       ) : (
-        <div className="space-y-3 max-h-100 overflow-y-auto pr-1">
+        <div className="max-h-100 space-y-3 overflow-y-auto pr-1">
           {filteredTransactions.map((tx:Transaction) => (
             <div 
               key={tx.id} 
-              className="flex items-center justify-between p-4 bg-surface rounded-lg border border-gray-100 hover:border-primary/30 transition-all animate-fade-in"
+              className="flex items-center justify-between rounded-2xl border border-outline-variant bg-surface p-4 transition-all hover:border-primary/30 dark:bg-secondary/10"
             >
               {/* القسم الأيمن: البيانات والتصنيف */}
               <div className="space-y-1">
@@ -141,7 +149,7 @@ const matchesCategory = selectedCategory === 'all' || (tx.category && tx.categor
 
               {/* القسم الأيسر: المبالغ المالية + زر الحذف */}
               <div className="flex items-center gap-4">
-                <div className="text-left bg-white/60 px-3 py-1.5 rounded-md border border-gray-50">
+                <div className="rounded-xl border border-outline-variant bg-surface-container px-3 py-1.5 text-left">
                   <p className="text-sm font-bold text-secondary">
                     {tx.amountUSD.toFixed(2)} $
                   </p>
@@ -152,7 +160,7 @@ const matchesCategory = selectedCategory === 'all' || (tx.category && tx.categor
 
                 <button
                   onClick={() => handleDeleteClick(tx)}
-                  className="text-error hover:bg-red-50 p-2 rounded-full transition-all"
+                  className="rounded-full p-2 text-error transition-all hover:bg-error/10"
                   title="حذف العملية واسترداد المبلغ"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
@@ -165,6 +173,16 @@ const matchesCategory = selectedCategory === 'all' || (tx.category && tx.categor
           ))}
         </div>
       )}
+
+      <ConfirmDialog
+        open={confirmState.open}
+        title="حذف العملية"
+        message={confirmState.tx ? `هل أنت متأكد من حذف عملية "${confirmState.tx.title}" واسترداد المبلغ؟` : ''}
+        confirmLabel="حذف"
+        cancelLabel="إلغاء"
+        onConfirm={handleConfirmDelete}
+        onCancel={() => setConfirmState({ open: false, tx: null })}
+      />
     </div>
   );
 }

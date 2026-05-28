@@ -1,6 +1,7 @@
 import type { Config } from "tailwindcss";
 
 const config: Config = {
+  darkMode: 'class',
     content: [
     "./pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
@@ -10,15 +11,16 @@ const config: Config = {
     extend: {
       colors: {
         primary: {
-          DEFAULT: '#40E0D0',
-          dark: '#006a62',
+          DEFAULT: 'var(--color-primary)',
+          dark: 'var(--color-primary-dark)',
         },
         secondary: {
-          DEFAULT: '#1A2B3C',
+          DEFAULT: 'var(--color-secondary)',
         },
-        surface: '#F7FAFC',
-        'outline-variant': '#D0D7DE',
-        error: '#DC2626',
+        surface: 'var(--color-surface)',
+        'surface-container': 'var(--color-surface-container)',
+        'outline-variant': 'var(--color-outline-variant)',
+        error: 'var(--color-error)',
       },
       borderRadius: {
         'card': '12px',

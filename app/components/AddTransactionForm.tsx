@@ -33,34 +33,34 @@ const newItem: BasketItem = {
   setAmount(0);
 };
     return(
-<form onSubmit={handleSubmit} className="bg-white p-6 rounded-card shadow-sm border border-outline-variant max-w-md">
-      <h2 className="text-xl font-bold text-secondary mb-4">إضافة فاتورة جديدة</h2>
+<form onSubmit={handleSubmit} className="max-w-md rounded-[28px] border border-outline-variant bg-surface p-6 shadow-sm">
+      <h2 className="mb-4 text-xl font-bold text-secondary">إضافة فاتورة جديدة</h2>
       
       <div className="space-y-4">
         {/* اسم المنتج */}
         <div>
-          <label className="block text-sm mb-1">اسم المنتج / الوصف</label>
+          <label className="mb-1 block text-sm text-secondary">اسم المنتج / الوصف</label>
           <input 
             type="text" value={title} onChange={(e) => setTitle(e.target.value)}
-            className="w-full p-2 border rounded-md focus:border-primary outline-none"
+            className="w-full rounded-2xl border border-outline-variant bg-surface p-3 outline-none focus:border-primary dark:bg-secondary/10"
             placeholder="مثلاً: فاتورة كهرباء" required
           />
         </div>
 
         {/* العملة والمبلغ */}
-        <div className="flex gap-2">
+        <div className="flex gap-3">
           <div className="flex-1">
-            <label className="block text-sm mb-1">المبلغ</label>
+            <label className="mb-1 block text-sm text-secondary">المبلغ</label>
             <input 
               type="number" value={amount} onChange={(e) => setAmount(Number(e.target.value))}
-              className="w-full p-2 border rounded-md outline-none" required
+              className="w-full rounded-2xl border border-outline-variant bg-surface p-3 outline-none focus:border-primary dark:bg-secondary/10" required
             />
           </div>
           <div>
-            <label className="block text-sm mb-1">العملة</label>
+            <label className="mb-1 block text-sm text-secondary">العملة</label>
             <select 
               value={currency} onChange={(e) => setCurrency(e.target.value as 'USD' | 'SYP')}
-              className="p-2 border rounded-md outline-none bg-surface"
+              className="rounded-2xl border border-outline-variant bg-surface p-3 outline-none focus:border-primary dark:bg-slate-800 dark:text-white"
             >
               <option value="SYP">ل.س</option>
               <option value="USD">$</option>
@@ -70,21 +70,21 @@ const newItem: BasketItem = {
 
         {/* التصنيف */}
         <div>
-          <label className="block text-sm mb-1">نوع المصرف</label>
+          <label className="mb-1 block text-sm text-secondary">نوع المصرف</label>
           <select 
             value={category} onChange={(e) => setCategory(e.target.value as CategoryType)}
-            className="w-full p-2 border rounded-md outline-none bg-surface"
+            className="w-full rounded-2xl border border-outline-variant bg-surface p-3 outline-none focus:border-primary dark:bg-slate-800 dark:text-white"
           >
-            <option value="أساسي">أساسي</option>
+            <option value="اساسي">اساسي</option>
             <option value="ثانوي">ثانوي</option>
             <option value="ديون">ديون</option>
             <option value="سد ديون">سد ديون</option>
-            <option value="إعدام">إعدام</option>
+            <option value="اعدام">اعدام</option>
             <option value="ادخار">ادخار</option>
           </select>
         </div>
 
-        <button type="submit" className="w-full bg-secondary text-white py-3 rounded-md font-bold hover:bg-opacity-90 transition-all">
+        <button type="submit" className="w-full rounded-2xl bg-secondary py-3 font-bold text-surface transition hover:opacity-90">
           إضافة المصروف
         </button>
       </div>

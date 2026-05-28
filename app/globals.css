@@ -1,11 +1,44 @@
 @import "tailwindcss";
 
 @theme {
-	--color-primary: #40E0D0;
-	--color-primary-dark: #006a62;
-	--color-secondary: #1A2B3C;
-	--color-surface: #F7FAFC;
-	--color-outline-variant: #D0D7DE;
-	--color-error: #DC2626;
+	--color-primary: var(--app-color-primary);
+	--color-primary-dark: var(--app-color-primary-dark);
+	--color-secondary: var(--app-color-secondary);
+	--color-surface: var(--app-color-surface);
+	--color-surface-container: var(--app-color-surface-container);
+	--color-outline-variant: var(--app-color-outline-variant);
+	--color-error: var(--app-color-error);
 	--radius-card: 12px;
+}
+
+:root {
+	--app-color-primary: #40E0D0;
+	--app-color-primary-dark: #006a62;
+	--app-color-secondary: #1A2B3C;
+	--app-color-surface: #F7FAFC;
+	--app-color-surface-container: #eef6f8;
+	--app-color-outline-variant: #D0D7DE;
+	--app-color-error: #DC2626;
+	color-scheme: light;
+}
+
+.dark {
+	--app-color-primary: #2dd4bf;
+	--app-color-primary-dark: #0f766e;
+	--app-color-secondary: #e5eef7;
+	--app-color-surface: #0b1117;
+	--app-color-surface-container: #111926;
+	--app-color-outline-variant: #263244;
+	--app-color-error: #f87171;
+	color-scheme: dark;
+}
+
+html,
+body {
+	height: 100%;
+}
+
+body {
+	background: var(--app-color-surface);
+	color: var(--app-color-secondary);
 }

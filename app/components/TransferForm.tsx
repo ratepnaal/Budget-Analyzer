@@ -39,14 +39,14 @@ const dispatch = useAppDispatch();
   };
 
 return( 
-    <div className="bg-white p-6 rounded-card shadow-sm border border-outline-variant max-w-md w-full">
-      <h2 className="text-xl font-bold text-secondary mb-2">تصريف عملة (إلى صندوق الليرة)</h2>
-      <p className="text-xs text-gray-500 mb-4">سعر الصرف المعتمد حالياً: 1$ = {currentExchangeRate.toLocaleString()} ل.س</p>
+    <div className="w-full max-w-md rounded-[28px] border border-outline-variant bg-surface p-6 shadow-sm">
+      <h2 className="mb-2 text-xl font-bold text-secondary">تصريف عملة (إلى صندوق الليرة)</h2>
+      <p className="mb-4 text-xs text-gray-500">سعر الصرف المعتمد حالياً: 1$ = {currentExchangeRate.toLocaleString()} ل.س</p>
 
       <form onSubmit={handleTransfer} className="space-y-4">
         {/* حقل إدخال الدولار */}
         <div>
-          <label className="block text-sm font-medium mb-1 text-secondary">المبلغ بالدولار ($)</label>
+          <label className="mb-1 block text-sm font-medium text-secondary">المبلغ بالدولار ($)</label>
           <input
             type="number"
             value={usdAmountInput}
@@ -54,7 +54,7 @@ return(
               setUsdAmountInput(e.target.value);
               if (error) setError(null); 
             }}
-            className="w-full p-3 border rounded-md outline-none focus:border-primary transition-all"
+            className="w-full rounded-2xl border border-outline-variant bg-surface p-3 outline-none transition-all focus:border-primary dark:bg-secondary/10"
             placeholder="مثال: 100"
             required
           />
@@ -62,14 +62,14 @@ return(
 
         {/* العرض الحي للمبلغ بالليرة */}
         {amountToReceiveSYP > 0 && (
-          <div className="bg-surface p-3 rounded-md border border-dashed border-primary/30 text-sm text-secondary">
+          <div className="rounded-2xl border border-dashed border-primary/30 bg-surface-container p-3 text-sm text-secondary">
             المبلغ الذي سيتم إضافته لصندوق الليرة: <span className="font-bold text-primary-dark">{amountToReceiveSYP.toLocaleString()} ل.س</span>
           </div>
         )}
 
         {/* عرض رسالة الخطأ إن وجدت */}
         {error && (
-          <p className="text-error text-xs font-semibold bg-red-50 p-2 rounded border border-red-200">
+          <p className="rounded-xl border border-red-200 bg-red-50 p-2 text-xs font-semibold text-error">
             {error}
           </p>
         )}
@@ -77,7 +77,7 @@ return(
         {/* زر التنفيذ */}
         <button
           type="submit"
-          className="w-full bg-primary hover:bg-primary-dark text-white font-bold py-3 rounded-md transition-all shadow-md shadow-primary/10"
+          className="w-full rounded-2xl bg-primary py-3 font-bold text-slate-900 shadow-md shadow-primary/10 transition-all hover:bg-primary-dark"
         >
           تأكيد التحويل والتصريف
         </button>

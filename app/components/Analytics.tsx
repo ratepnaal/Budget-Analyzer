@@ -28,31 +28,31 @@ export default function Analytics() {
   };
 
   return (
-    <div className="bg-white p-6 rounded-card shadow-sm border border-outline-variant w-full h-full">
-      <h2 className="text-xl font-bold text-secondary mb-5">التحليل المالي الذكي</h2>
+    <div className="h-full w-full rounded-3xl border border-outline-variant bg-surface p-6 shadow-sm">
+      <h2 className="mb-5 text-xl font-bold text-secondary">التحليل المالي الذكي</h2>
 
       {transactions.length === 0 ? (
-        <div className="text-center py-12 text-gray-400 text-sm">
+        <div className="py-12 text-center text-sm text-gray-400">
           أضف بعض العمليات في السجل لتظهر لك الرسوم البيانية ونسب التوزيع هنا.
         </div>
       ) : (
         <div className="space-y-6">
           {/* كارد عرض إجمالي الإنفاق المعياري */}
-          <div className="bg-surface p-4 rounded-lg border border-gray-100 flex justify-between items-center">
+          <div className="flex items-center justify-between rounded-2xl border border-outline-variant bg-surface-container p-4">
             <div>
               <p className="text-xs text-gray-400 font-medium">إجمالي حجم الإنفاق المسجل</p>
               <p className="text-2xl font-black text-secondary mt-1">
                 {totalExpensesUSD.toFixed(2)} $
               </p>
             </div>
-            <span className="text-xs bg-primary/10 text-primary font-bold px-3 py-1 rounded-md">
+            <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-bold text-primary">
               {transactions.length} عملية حية
             </span>
           </div>
 
           {/* قائمة التوزيع البصري للتصنيفات */}
           <div className="space-y-4">
-            <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">نسب توزيع المصاريف:</p>
+            <p className="text-xs font-bold uppercase tracking-wider text-gray-400">نسب توزيع المصاريف:</p>
             
             {Object.keys(categoryStyles).map((catKey) => {
               const category = catKey as CategoryType;
@@ -67,7 +67,7 @@ export default function Analytics() {
               const styles = categoryStyles[category];
 
               return (
-                <div key={category} className="space-y-1.5 animate-fade-in">
+                <div key={category} className="space-y-1.5">
                   {/* السطر العلوي للتصنيف: الاسم والنسبة والمبلغ */}
                   <div className="flex justify-between items-center text-xs font-semibold">
                     <div className="flex items-center gap-1.5">
@@ -81,7 +81,7 @@ export default function Analytics() {
                   </div>
 
                   {/* شريط التقدم البصري (Progress Bar Component) */}
-                  <div className="w-full h-2.5 bg-gray-100 rounded-full overflow-hidden">
+                  <div className="h-2.5 w-full overflow-hidden rounded-full bg-gray-100 dark:bg-secondary/20">
                     <div 
                       className={`h-full ${styles.bar} transition-all duration-500 ease-out`}
                       style={{ width: `${percentage}%` }}

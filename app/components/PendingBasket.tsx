@@ -1,17 +1,26 @@
 // app/components/PendingBasket.tsx
 'use client';
+import { useState } from 'react';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { removeFromBasket, clearBasket } from '@/store/basketSlice';
-import { withdrawSYP, withdrawUSD, addToSavings } from '@/store/walletSlice';
+import { withdrawSYP, withdrawUSD, depositSYP, depositUSD, addToSavings, repayLoan } from '@/store/walletSlice';
 import { addTransaction } from '@/store/transactionsSlice';
+import { addNotification } from '@/store/notificationsSlice';
 import { CategoryType } from '@/types';
+import ConfirmDialog from './ConfirmDialog';
 
 export default function PendingBasket() {
   const dispatch = useAppDispatch();
+  const [confirmState, setConfirmState] = useState<{ open: boolean; title: string; message: string; onConfirm: (() => void) | null }>({
+    open: false,
+    title: '',
+    message: '',
+    onConfirm: null,
+  });
 
   // جلب العناصر الحالية من السلة وبيانات المحفظة
   const basketItems = useAppSelector((state) => state.basket.items);
-  const { currentExchangeRate, sypBalance, usdBalance } = useAppSelector((state) => state.wallet);
+  const { currentExchangeRate, sypBalance, usdBalance, loansBalance } = useAppSelector((state) => state.wallet);
 
   // حساب المجاميع حسب العملة
   const totalSYP = basketItems
@@ -40,9 +49,33 @@ export default function PendingBasket() {
 
     const affordability = canAfford();
     if (!affordability.ok) {
-      alert(affordability.message);
+      dispatch(addNotification({ type: 'error', message: affordability.message ?? 'تعذر إتمام العملية', duration: 3000 }));
       return;
     }
+
+    // تحقق ما إذا كان مجموع السداد لفواتير "سد ديون" يتجاوز رصيد القروض المتاح
+    const totalDebtUSD = basketItems
+      .filter((item) => String(item.category || '').trim() === 'سد ديون')
+      .reduce((sum, item) => sum + (item.currency === 'USD' ? item.amount : item.amount / currentExchangeRate), 0);
+
+    if (totalDebtUSD > loansBalance) {
+      setConfirmState({
+        open: true,
+        title: 'تنبيه سداد القروض',
+        message: `مجموع السداد المطلوب للقروض هو ${totalDebtUSD.toFixed(2)}$، وهو أكبر من رصيد القروض المتاح ${loansBalance.toFixed(2)}$. سيتم إرجاع الفائض إلى الصندوق المدفوع.`,
+        onConfirm: () => {
+          setConfirmState((current) => ({ ...current, open: false }));
+          processCheckout();
+        },
+      });
+      return;
+    }
+
+    processCheckout();
+  };
+
+  const processCheckout = () => {
+    if (basketItems.length === 0) return;
 
     // ترحيل كل عنصر: احسب الخصم الصحيح، وتعامل مع فئة الادخار بشكل منفصل
     basketItems.forEach((item) => {
@@ -77,57 +110,80 @@ export default function PendingBasket() {
         return;
       }
 
-      // العادة: خصم المبلغ من المحفظة المناسبة
-      let finalAmountUSD = 0;
-      let finalAmountSYP = 0;
+      // إذا كانت الفاتورة لتسديد دين: نخفض من صندوق العملة المستخدمة ونخفض من صندوق القروض (بوحدة USD)
+      if (categoryNormalized === 'سد ديون') {
+        let finalAmountUSD = 0;
 
-      if (item.currency === 'SYP') {
-        dispatch(withdrawSYP(item.amount));
-        finalAmountSYP = item.amount;
-        finalAmountUSD = item.amount / currentExchangeRate;
-      } else {
-        dispatch(withdrawUSD(item.amount));
-        finalAmountUSD = item.amount;
-        finalAmountSYP = item.amount * currentExchangeRate;
+        if (item.currency === 'SYP') {
+          dispatch(withdrawSYP(item.amount));
+          finalAmountUSD = item.amount / currentExchangeRate;
+        } else {
+          dispatch(withdrawUSD(item.amount));
+          finalAmountUSD = item.amount;
+        }
+
+        // حد السداد الفعلي بواسطة رصيد القروض المتاح
+        const repayRequestedUSD = finalAmountUSD;
+        const repayAvailableUSD = loansBalance;
+        const repayUsedUSD = Math.min(repayRequestedUSD, repayAvailableUSD);
+        const surplusUSD = Math.max(0, repayRequestedUSD - repayAvailableUSD);
+
+        if (repayUsedUSD > 0) dispatch(repayLoan(repayUsedUSD));
+
+        // إرجاع الفائض إلى الصندوق الأصلي بحسب العملة
+        if (surplusUSD > 0) {
+          if (item.currency === 'USD') {
+            dispatch(depositUSD(surplusUSD));
+          } else {
+            const surplusSYP = surplusUSD * currentExchangeRate;
+            dispatch(depositSYP(surplusSYP));
+          }
+        }
+
+        // سجل المعاملة بالمبلغ المستخدم فعلياً في السداد
+        const recordedUSD = repayUsedUSD;
+        const recordedSYP = recordedUSD * currentExchangeRate;
+
+        dispatch(
+          addTransaction({
+            id: item.id,
+            title: item.title,
+            amountUSD: recordedUSD,
+            amountSYP: recordedSYP,
+            exchangeRate: currentExchangeRate,
+            category: item.category as CategoryType,
+            date: new Date().toLocaleDateString('ar-EG'),
+            isPending: false,
+            currency: item.currency,
+          })
+        );
+
+        return;
       }
-
-      dispatch(
-        addTransaction({
-          id: item.id,
-          title: item.title,
-          amountUSD: finalAmountUSD,
-          amountSYP: finalAmountSYP,
-          exchangeRate: currentExchangeRate,
-          category: item.category as CategoryType,
-          date: new Date().toLocaleDateString('ar-EG'),
-          isPending: false,
-          currency: item.currency,
-        })
-      );
     });
 
     dispatch(clearBasket());
-    alert('تم ترحيل كافة الفواتير المعلقة وتحديث الصناديق والسجل بنجاح!');
+    dispatch(addNotification({ type: 'success', message: 'تم ترحيل كافة الفواتير المعلقة وتحديث الصناديق والسجل بنجاح!', duration: 3000 }));
   };
 
   return (
-    <div className="bg-white p-6 rounded-card shadow-sm border border-outline-variant w-full">
-      <div className="flex justify-between items-center mb-5">
+    <div className="w-full rounded-3xl border border-outline-variant bg-surface p-6 shadow-sm">
+      <div className="mb-5 flex items-center justify-between">
         <h2 className="text-xl font-bold text-secondary">الفواتير المعلقة الحالية</h2>
-        <span className="bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-bold">
+        <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-bold text-primary">
           {basketItems.length} معلقة
         </span>
       </div>
 
       {basketItems.length === 0 ? (
-        <div className="text-center py-8 text-gray-400 text-sm border border-dashed border-gray-200 rounded-lg">
+        <div className="rounded-2xl border border-dashed border-outline-variant py-8 text-center text-sm text-gray-400">
           السلة فارغة حالياً. أضف فواتير من النموذج لتظهر هنا قبل ترحيلها.
         </div>
       ) : (
         <div className="space-y-4">
-          <div className="space-y-2 max-h-[250px] overflow-y-auto">
+          <div className="max-h-[250px] space-y-2 overflow-y-auto">
             {basketItems.map((item) => (
-              <div key={item.id} className="flex justify-between items-center p-3 bg-surface rounded-lg border border-gray-50 text-sm">
+              <div key={item.id} className="flex items-center justify-between rounded-2xl border border-outline-variant/70 bg-surface p-3 text-sm dark:bg-secondary/10">
                 <div>
                   <p className="font-semibold text-secondary">{item.title}</p>
                   <span className="text-xs text-gray-400">{item.category}</span>
@@ -138,7 +194,7 @@ export default function PendingBasket() {
                   </p>
                   <button
                     onClick={() => dispatch(removeFromBasket(item.id))}
-                    className="text-error hover:text-red-700 font-bold px-2 py-1 rounded transition-colors text-xs"
+                    className="rounded-lg px-2 py-1 text-xs font-bold text-error transition-colors hover:bg-error/10"
                   >
                     حذف
                   </button>
@@ -147,7 +203,7 @@ export default function PendingBasket() {
             ))}
           </div>
 
-          <div className="bg-surface-container p-4 rounded-lg space-y-1.5 text-xs text-secondary border border-outline-variant">
+          <div className="space-y-1.5 rounded-2xl border border-outline-variant bg-surface-container p-4 text-xs text-secondary">
             <p className="font-bold mb-1 text-sm text-secondary">المجموع المطلوب ترحيله الخصم:</p>
             {totalSYP > 0 && (
               <div className="flex justify-between">
@@ -165,12 +221,22 @@ export default function PendingBasket() {
 
           <button
             onClick={handleCheckout}
-            className="w-full bg-primary hover:bg-primary-dark text-white font-bold py-3 rounded-md transition-all shadow-md shadow-primary/10"
+            className="w-full rounded-2xl bg-primary py-3 font-bold text-slate-900 shadow-md shadow-primary/10 transition-all hover:bg-primary-dark"
           >
             ترحيل وتأكيد خصم الفواتير المعلقة
           </button>
         </div>
       )}
+
+      <ConfirmDialog
+        open={confirmState.open}
+        title={confirmState.title}
+        message={confirmState.message}
+        confirmLabel="متابعة الترحيل"
+        cancelLabel="إلغاء"
+        onConfirm={() => confirmState.onConfirm?.()}
+        onCancel={() => setConfirmState((current) => ({ ...current, open: false }))}
+      />
     </div>
   );
 }
