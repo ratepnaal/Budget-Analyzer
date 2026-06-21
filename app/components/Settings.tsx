@@ -35,39 +35,39 @@ export default function Settings() {
   };
 
   return (
-    <div className="w-full rounded-[28px] border border-outline-variant bg-surface p-6 shadow-sm lg:p-8">
+    <div className="w-full rounded-2xl sm:rounded-[28px] border border-outline-variant bg-surface p-4 sm:p-6 shadow-sm lg:p-8">
       
-      <h2 className="mb-5 text-xl font-bold text-secondary">إعدادات النظام المالية</h2>
+      <h2 className="mb-4 sm:mb-5 text-lg sm:text-xl font-bold text-secondary">إعدادات النظام المالية</h2>
       
-      <form onSubmit={handleUpdate} className="space-y-4">
+      <form onSubmit={handleUpdate} className="space-y-3 sm:space-y-4">
         <div>
-          <label className="mb-1 block text-sm font-medium text-secondary">
+          <label className="mb-1 block text-xs sm:text-sm font-medium text-secondary">
             سعر صرف الدولار مقابل الليرة السورية (1$ = ؟)
           </label>
-          <div className="relative rounded-2xl shadow-sm">
+          <div className="relative rounded-xl sm:rounded-2xl shadow-sm">
             <input
               type="number"
               value={rateInput}
               onChange={(e) => setRateInput(e.target.value)}
 
-              className="w-full rounded-2xl border border-outline-variant bg-surface p-3 pr-12 font-bold text-secondary outline-none transition-all focus:border-primary dark:bg-secondary/10"
+              className="w-full rounded-xl sm:rounded-2xl border border-outline-variant bg-surface p-2.5 sm:p-3 pr-12 font-bold text-secondary outline-none transition-all focus:border-primary dark:bg-secondary/10"
               placeholder="مثال: 15000"
               required
             />
-            <div className="pointer-events-none absolute inset-y-0 start-0 flex items-center ps-3 text-xs text-gray-400">
+            <div className="pointer-events-none absolute inset-y-0 start-0 flex items-center ps-3 text-[10px] sm:text-xs text-gray-400">
               ل.س
             </div>
           </div>
         </div>
 
         <div>
-          <label className="mb-1 block text-sm font-medium text-secondary">
+          <label className="mb-1 block text-xs sm:text-sm font-medium text-secondary">
             الوضع العام
           </label>
           <select
             value={selectedTheme}
             onChange={(e) => setSelectedTheme(e.target.value as ThemeMode)}
-            className="w-full rounded-2xl border border-outline-variant bg-surface p-3 font-bold text-secondary outline-none transition-all focus:border-primary dark:bg-slate-800 dark:text-white"
+            className="w-full rounded-xl sm:rounded-2xl border border-outline-variant bg-surface p-2.5 sm:p-3 font-bold text-secondary outline-none transition-all focus:border-primary dark:bg-slate-800 dark:text-white"
           >
             <option value="system">حسب النظام</option>
             <option value="light">فاتح</option>
@@ -77,7 +77,7 @@ export default function Settings() {
 
         <button
           type="submit"
-          className="w-full rounded-2xl bg-secondary py-3 font-bold text-surface shadow-md transition-all hover:opacity-90"
+          className="w-full rounded-xl sm:rounded-2xl bg-secondary py-2.5 sm:py-3 font-bold text-surface shadow-md transition-all hover:opacity-90"
         >
           حفظ وتطبيق السعر الجديد
           

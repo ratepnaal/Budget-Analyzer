@@ -36,9 +36,23 @@
 html,
 body {
 	height: 100%;
+	-webkit-text-size-adjust: 100%;
 }
 
 body {
 	background: var(--app-color-surface);
 	color: var(--app-color-secondary);
+	padding-bottom: env(safe-area-inset-bottom, 0);
+}
+
+/* Mobile touch optimizations */
+@media (max-width: 768px) {
+	input, select, textarea, button {
+		font-size: 16px !important; /* Prevent zoom on iOS */
+	}
+
+	/* Smoother scrolling on mobile */
+	.overflow-y-auto {
+		-webkit-overflow-scrolling: touch;
+	}
 }

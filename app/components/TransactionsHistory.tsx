@@ -66,31 +66,31 @@ const matchesCategory = selectedCategory === 'all' || (tx.category && tx.categor
   };
 
   return (
-    <div className="w-full rounded-3xl border border-outline-variant bg-surface p-6 shadow-sm">
-      <h2 className="text-xl font-bold text-secondary mb-3.75">سجل العمليات التاريخي</h2>
+    <div className="w-full rounded-2xl sm:rounded-3xl border border-outline-variant bg-surface p-4 sm:p-6 shadow-sm">
+      <h2 className="text-lg sm:text-xl font-bold text-secondary mb-3">سجل العمليات التاريخي</h2>
 
       {/* شريط أدوات الفلترة والبحث المتقدم (شاشة scannable واضحة) */}
-      <div className="mb-5 grid grid-cols-1 gap-3 rounded-2xl border border-outline-variant bg-surface-container p-4 md:grid-cols-3">
+      <div className="mb-4 sm:mb-5 grid grid-cols-1 gap-2.5 sm:gap-3 rounded-xl sm:rounded-2xl border border-outline-variant bg-surface-container p-3 sm:p-4 md:grid-cols-3">
         
         {/* حقل البحث النصي */}
         <div>
-          <label className="block text-[11px] font-bold text-gray-400 mb-1">ابحث باسم العملية:</label>
+          <label className="block text-[10px] sm:text-[11px] font-bold text-gray-400 mb-1">ابحث باسم العملية:</label>
           <input
             type="text"
             placeholder="مثال: شراء كتب..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full rounded-xl border border-outline-variant bg-surface p-3 text-xs outline-none focus:border-primary dark:bg-secondary/10"
+            className="w-full rounded-lg sm:rounded-xl border border-outline-variant bg-surface p-2.5 sm:p-3 text-xs outline-none focus:border-primary dark:bg-secondary/10"
           />
         </div>
 
         {/* منسدلة اختيار التصنيف */}
         <div>
-          <label className="block text-[11px] font-bold text-gray-400 mb-1">تصفية حسب التصنيف:</label>
+          <label className="block text-[10px] sm:text-[11px] font-bold text-gray-400 mb-1">تصفية حسب التصنيف:</label>
           <select
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
-            className="w-full rounded-xl border border-outline-variant bg-surface p-3 text-xs outline-none focus:border-primary dark:bg-slate-800 dark:text-white"
+            className="w-full rounded-lg sm:rounded-xl border border-outline-variant bg-surface p-2.5 sm:p-3 text-xs outline-none focus:border-primary dark:bg-slate-800 dark:text-white"
           >
             <option value="all">كل التصنيفات</option>
             <option value="اساسي">اساسي</option>
@@ -104,11 +104,11 @@ const matchesCategory = selectedCategory === 'all' || (tx.category && tx.categor
 
         {/* منسدلة اختيار عملة الصندوق */}
         <div>
-          <label className="block text-[11px] font-bold text-gray-400 mb-1">تصفية حسب صندوق السحب:</label>
+          <label className="block text-[10px] sm:text-[11px] font-bold text-gray-400 mb-1">تصفية حسب صندوق السحب:</label>
           <select
             value={selectedCurrency}
             onChange={(e) => setSelectedCurrency(e.target.value)}
-            className="w-full rounded-xl border border-outline-variant bg-surface p-3 text-xs outline-none focus:border-primary dark:bg-slate-800 dark:text-white"
+            className="w-full rounded-lg sm:rounded-xl border border-outline-variant bg-surface p-2.5 sm:p-3 text-xs outline-none focus:border-primary dark:bg-slate-800 dark:text-white"
           >
             <option value="all">كل الصناديق (الكل)</option>
             <option value="USD">صندوق الدولار ($)</option>
@@ -120,55 +120,95 @@ const matchesCategory = selectedCategory === 'all' || (tx.category && tx.categor
 
       {/* عرض الفواتير المفلترة */}
       {filteredTransactions.length === 0 ? (
-        <div className="py-12 text-center text-sm text-gray-400">
+        <div className="py-8 sm:py-12 text-center text-xs sm:text-sm text-gray-400">
           {transactions.length === 0 
             ? "لا توجد أي عمليات مسجلة حتى الآن." 
             : "لم يتم العثور على عمليات تطابق خيارات البحث الحالية!"}
         </div>
       ) : (
-        <div className="max-h-100 space-y-3 overflow-y-auto pr-1">
+        <div className="max-h-100 space-y-2.5 sm:space-y-3 overflow-y-auto pr-1">
           {filteredTransactions.map((tx:Transaction) => (
             <div 
               key={tx.id} 
-              className="flex items-center justify-between rounded-2xl border border-outline-variant bg-surface p-4 transition-all hover:border-primary/30 dark:bg-secondary/10"
+              className="rounded-xl sm:rounded-2xl border border-outline-variant bg-surface p-3 sm:p-4 transition-all hover:border-primary/30 dark:bg-secondary/10"
             >
-              {/* القسم الأيمن: البيانات والتصنيف */}
-              <div className="space-y-1">
-                <div className="flex items-center gap-2">
-                  <p className="font-semibold text-secondary text-base">{tx.title}</p>
-                  <span className={`text-xs px-2.5 py-0.5 rounded-full font-medium ${getCategoryColor(tx.category)}`}>
+              {/* Mobile: card layout عمودي | Desktop: flex أفقي */}
+              <div className="hidden sm:flex items-center justify-between">
+                {/* القسم الأيمن: البيانات والتصنيف - Desktop */}
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2">
+                    <p className="font-semibold text-secondary text-base">{tx.title}</p>
+                    <span className={`text-xs px-2.5 py-0.5 rounded-full font-medium ${getCategoryColor(tx.category)}`}>
+                      {tx.category}
+                    </span>
+                    {/* شارة مصغرة توضح العملة الأصلية المستخدمة في السحب لزيادة الموثوقية البصرية */}
+                    <span className={`text-[10px] px-1.5 py-0.2 rounded font-bold ${tx.currency === 'USD' ? 'bg-emerald-50 text-emerald-600' : 'bg-blue-50 text-blue-600'}`}>
+                      {tx.currency === 'USD' ? '$' : 'ل.س'}
+                    </span>
+                  </div>
+                  <p className="text-xs text-gray-400">{tx.date}</p>
+                </div>
+
+                {/* القسم الأيسر: المبالغ المالية + زر الحذف - Desktop */}
+                <div className="flex items-center gap-4">
+                  <div className="rounded-xl border border-outline-variant bg-surface-container px-3 py-1.5 text-left">
+                    <p className="text-sm font-bold text-secondary">
+                      {tx.amountUSD.toFixed(2)} $
+                    </p>
+                    <p className="text-xs text-gray-500 mt-0.5">
+                      معادل: {Math.round(tx.amountSYP).toLocaleString()} ل.س
+                    </p>
+                  </div>
+
+                  <button
+                    onClick={() => handleDeleteClick(tx)}
+                    className="rounded-full p-2 text-error transition-all hover:bg-error/10"
+                    title="حذف العملية واسترداد المبلغ"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+
+              {/* Mobile: تخطيط بطاقة عمودية */}
+              <div className="sm:hidden space-y-2">
+                {/* السطر الأول: العنوان */}
+                <div className="flex items-start justify-between gap-2">
+                  <p className="font-semibold text-secondary text-sm leading-snug">{tx.title}</p>
+                  <button
+                    onClick={() => handleDeleteClick(tx)}
+                    className="shrink-0 rounded-full p-1.5 text-error transition-all hover:bg-error/10"
+                    title="حذف العملية واسترداد المبلغ"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+                    </svg>
+                  </button>
+                </div>
+
+                {/* السطر الثاني: الشارات والتاريخ */}
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${getCategoryColor(tx.category)}`}>
                     {tx.category}
                   </span>
-                  {/* شارة مصغرة توضح العملة الأصلية المستخدمة في السحب لزيادة الموثوقية البصرية */}
-                  <span className={`text-[10px] px-1.5 py-0.2 rounded font-bold ${tx.currency === 'USD' ? 'bg-emerald-50 text-emerald-600' : 'bg-blue-50 text-blue-600'}`}>
+                  <span className={`text-[10px] px-1.5 py-0.5 rounded font-bold ${tx.currency === 'USD' ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-300' : 'bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-300'}`}>
                     {tx.currency === 'USD' ? '$' : 'ل.س'}
                   </span>
+                  <span className="text-[10px] text-gray-400 mr-auto">{tx.date}</span>
                 </div>
-                <p className="text-xs text-gray-400">{tx.date}</p>
-              </div>
 
-              {/* القسم الأيسر: المبالغ المالية + زر الحذف */}
-              <div className="flex items-center gap-4">
-                <div className="rounded-xl border border-outline-variant bg-surface-container px-3 py-1.5 text-left">
-                  <p className="text-sm font-bold text-secondary">
+                {/* السطر الثالث: المبالغ */}
+                <div className="flex items-center justify-between rounded-lg border border-outline-variant bg-surface-container px-2.5 py-1.5">
+                  <span className="text-xs font-bold text-secondary">
                     {tx.amountUSD.toFixed(2)} $
-                  </p>
-                  <p className="text-xs text-gray-500 mt-0.5">
-                    معادل: {Math.round(tx.amountSYP).toLocaleString()} ل.س
-                  </p>
+                  </span>
+                  <span className="text-[10px] text-gray-500">
+                    ≈ {Math.round(tx.amountSYP).toLocaleString()} ل.س
+                  </span>
                 </div>
-
-                <button
-                  onClick={() => handleDeleteClick(tx)}
-                  className="rounded-full p-2 text-error transition-all hover:bg-error/10"
-                  title="حذف العملية واسترداد المبلغ"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
-                  </svg>
-                </button>
               </div>
-
             </div>
           ))}
         </div>

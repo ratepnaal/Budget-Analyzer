@@ -8,6 +8,7 @@ import ThemeSync from './ThemeSync';
 import ToastCenter from './ToastCenter';
 import FloatingActionButton from './FloatingActionButton';
 import BackToDashboardButton from './BackToDashboardButton';
+import MobileBottomNav from './MobileBottomNav';
 
 interface AppShellProps {
   children: React.ReactNode;
@@ -34,18 +35,19 @@ export default function AppShell({ children }: AppShellProps) {
       <ThemeSync />
       <Navbar title={title} onMenuClick={() => setSidebarOpen((current) => !current)} />
 
-      <div className="relative grid w-full min-h-[calc(100vh-4rem)] grid-cols-1 gap-3 lg:grid-cols-[18rem_1fr]">
+      <div className="relative grid w-full min-h-[calc(100vh-4rem)] lg:min-h-[calc(100vh-4rem)] grid-cols-1 gap-3 lg:grid-cols-[18rem_1fr]">
         <div className="order-1 lg:col-start-1 lg:col-end-2">
           <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
         </div>
 
-        <main className="min-w-0 order-2 flex-1 px-4 pb-10 pt-2 sm:px-6 lg:px-8 lg:col-start-2 lg:col-end-3">
+        <main className="min-w-0 order-2 flex-1 px-3 pb-24 pt-2 sm:px-6 lg:px-8 lg:pb-10 lg:col-start-2 lg:col-end-3">
           <BackToDashboardButton hidden={pathname === '/'} />
           {children}
         </main>
       </div>
 
       <FloatingActionButton hidden={pathname === '/invoice-manage'} />
+      <MobileBottomNav />
       <ToastCenter />
     </div>
   );

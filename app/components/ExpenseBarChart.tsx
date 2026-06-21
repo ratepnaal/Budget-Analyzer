@@ -48,18 +48,18 @@ export default function ExpenseBarChart() {
   )
 
   return (
-    <div className="w-full rounded-3xl border border-outline-variant bg-surface p-6 shadow-sm">
-      <h2 className="text-xl font-bold text-secondary">تدفق الصناديق حسب التصنيف</h2>
-      <p className="text-xs text-gray-400 mb-5">معاينة مقارنة للسحب الفعلي من صندوق الدولار وصندوق الليرة</p>
+    <div className="w-full rounded-2xl sm:rounded-3xl border border-outline-variant bg-surface p-4 sm:p-6 shadow-sm">
+      <h2 className="text-lg sm:text-xl font-bold text-secondary">تدفق الصناديق حسب التصنيف</h2>
+      <p className="text-[10px] sm:text-xs text-gray-400 mb-4 sm:mb-5">معاينة مقارنة للسحب الفعلي من صندوق الدولار وصندوق الليرة</p>
 
       {activeCategories.length === 0 ? (
-        <div className="py-16 text-center text-sm text-gray-400">
+        <div className="py-10 sm:py-16 text-center text-xs sm:text-sm text-gray-400">
           لا توجد عمليات نشطة لعرض المخطط المقارن.
         </div>
       ) : (
-        <div className="space-y-6">
+        <div className="space-y-4 sm:space-y-6">
           {/* حاوية الرسم البياني العمودي المزدوج والمحصن ضد التكرار */}
-          <div className="flex h-60 w-full items-end justify-around gap-4 border-b border-outline-variant px-2 pt-8">
+          <div className="flex h-40 sm:h-60 w-full items-end justify-around gap-2 sm:gap-4 border-b border-outline-variant px-1 sm:px-2 pt-6 sm:pt-8">
             {activeCategories.map((category) => {
               const data = categoryTotals[category];
               
@@ -75,30 +75,30 @@ export default function ExpenseBarChart() {
                 <div key={category} className="flex flex-col items-center flex-1 h-full justify-end group relative">
                   
                   {/* نافذة تفصيلية منبثقة تفكك مصادر الصرف بدقة مجمعة */}
-                  <div className="absolute bottom-full z-10 mb-2 min-w-[140px] space-y-1 whitespace-nowrap rounded-xl bg-slate-900 p-3 text-right text-[11px] text-white shadow-xl opacity-0 transition-all duration-200 pointer-events-none group-hover:opacity-100 dark:bg-slate-800">
+                  <div className="absolute bottom-full z-10 mb-2 min-w-[120px] sm:min-w-[140px] space-y-1 whitespace-nowrap rounded-xl bg-slate-900 p-2.5 sm:p-3 text-right text-[10px] sm:text-[11px] text-white shadow-xl opacity-0 transition-all duration-200 pointer-events-none group-hover:opacity-100 dark:bg-slate-800">
                     <p className="font-bold border-b border-white/20 pb-1 text-center mb-1 text-primary">{category}</p>
-                    <p className="flex justify-between gap-4">
+                    <p className="flex justify-between gap-3 sm:gap-4">
                       <span>من صندوق $:</span>
                       <span className="font-bold text-emerald-400">{data.usdPure.toFixed(2)} $</span>
                     </p>
-                    <p className="flex justify-between gap-4">
+                    <p className="flex justify-between gap-3 sm:gap-4">
                       <span>من صندوق ل.س:</span>
                       <span className="font-bold text-blue-400">{Math.round(data.sypPure).toLocaleString()} ل.س</span>
                     </p>
                   </div>
 
                   {/* الحاوية الداخلية للعمودين التوأمين */}
-                  <div className="flex h-full w-full items-end justify-center gap-1">
+                  <div className="flex h-full w-full items-end justify-center gap-0.5 sm:gap-1">
                     {/* عمود الدولار الفرعي */}
                     <div
                       style={{ height: `${usdBarHeight}%` }}
-                      className="w-1/2 max-w-4 bg-emerald-500 rounded-t-sm transition-all duration-500 ease-out shadow-sm min-h-[2px]"
+                      className="w-1/2 max-w-3 sm:max-w-4 bg-emerald-500 rounded-t-sm transition-all duration-500 ease-out shadow-sm min-h-[2px]"
                     />
 
                     {/* عمود الليرة السورية الفرعي */}
                     <div
                       style={{ height: `${sypBarHeight}%` }}
-                      className="w-1/2 max-w-4 bg-blue-500 rounded-t-sm transition-all duration-500 ease-out shadow-sm min-h-[2px]"
+                      className="w-1/2 max-w-3 sm:max-w-4 bg-blue-500 rounded-t-sm transition-all duration-500 ease-out shadow-sm min-h-[2px]"
                     />
                   </div>
 
@@ -108,10 +108,10 @@ export default function ExpenseBarChart() {
           </div>
 
           {/* أسماء التصنيفات في الأسفل */}
-          <div className="flex justify-around gap-4 px-2">
+          <div className="flex justify-around gap-2 sm:gap-4 px-1 sm:px-2">
             {activeCategories.map((category) => (
               <div key={category} className="text-center flex-1 truncate">
-                <span className="text-[11px] font-bold text-secondary block truncate" title={category}>
+                <span className="text-[9px] sm:text-[11px] font-bold text-secondary block truncate" title={category}>
                   {category}
                 </span>
               </div>
@@ -119,13 +119,13 @@ export default function ExpenseBarChart() {
           </div>
 
           {/* دليل الألوان المصغر */}
-          <div className="flex items-center justify-center gap-6 border-t border-outline-variant pt-3 text-xs font-semibold">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-6 border-t border-outline-variant pt-3 text-[10px] sm:text-xs font-semibold">
             <div className="flex items-center gap-1.5">
-              <span className="w-3 h-3 bg-emerald-500 rounded-sm block" />
+              <span className="w-2.5 h-2.5 sm:w-3 sm:h-3 bg-emerald-500 rounded-sm block" />
               <span className="text-secondary">صندوق الدولار ($)</span>
             </div>
             <div className="flex items-center gap-1.5">
-              <span className="w-3 h-3 bg-blue-500 rounded-sm block" />
+              <span className="w-2.5 h-2.5 sm:w-3 sm:h-3 bg-blue-500 rounded-sm block" />
               <span className="text-secondary">صندوق الليرة (ل.س)</span>
             </div>
           </div>

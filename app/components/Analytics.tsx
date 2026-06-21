@@ -28,31 +28,31 @@ export default function Analytics() {
   };
 
   return (
-    <div className="h-full w-full rounded-3xl border border-outline-variant bg-surface p-6 shadow-sm">
-      <h2 className="mb-5 text-xl font-bold text-secondary">التحليل المالي الذكي</h2>
+    <div className="h-full w-full rounded-2xl sm:rounded-3xl border border-outline-variant bg-surface p-4 sm:p-6 shadow-sm">
+      <h2 className="mb-4 sm:mb-5 text-lg sm:text-xl font-bold text-secondary">التحليل المالي الذكي</h2>
 
       {transactions.length === 0 ? (
-        <div className="py-12 text-center text-sm text-gray-400">
+        <div className="py-8 sm:py-12 text-center text-xs sm:text-sm text-gray-400">
           أضف بعض العمليات في السجل لتظهر لك الرسوم البيانية ونسب التوزيع هنا.
         </div>
       ) : (
-        <div className="space-y-6">
+        <div className="space-y-4 sm:space-y-6">
           {/* كارد عرض إجمالي الإنفاق المعياري */}
-          <div className="flex items-center justify-between rounded-2xl border border-outline-variant bg-surface-container p-4">
+          <div className="flex items-center justify-between rounded-xl sm:rounded-2xl border border-outline-variant bg-surface-container p-3 sm:p-4">
             <div>
-              <p className="text-xs text-gray-400 font-medium">إجمالي حجم الإنفاق المسجل</p>
-              <p className="text-2xl font-black text-secondary mt-1">
+              <p className="text-[10px] sm:text-xs text-gray-400 font-medium">إجمالي حجم الإنفاق المسجل</p>
+              <p className="text-lg sm:text-2xl font-black text-secondary mt-0.5 sm:mt-1">
                 {totalExpensesUSD.toFixed(2)} $
               </p>
             </div>
-            <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-bold text-primary">
+            <span className="rounded-full bg-primary/10 px-2.5 py-0.5 sm:px-3 sm:py-1 text-[10px] sm:text-xs font-bold text-primary">
               {transactions.length} عملية حية
             </span>
           </div>
 
           {/* قائمة التوزيع البصري للتصنيفات */}
-          <div className="space-y-4">
-            <p className="text-xs font-bold uppercase tracking-wider text-gray-400">نسب توزيع المصاريف:</p>
+          <div className="space-y-3 sm:space-y-4">
+            <p className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-gray-400">نسب توزيع المصاريف:</p>
             
             {Object.keys(categoryStyles).map((catKey) => {
               const category = catKey as CategoryType;
@@ -67,21 +67,21 @@ export default function Analytics() {
               const styles = categoryStyles[category];
 
               return (
-                <div key={category} className="space-y-1.5">
+                <div key={category} className="space-y-1 sm:space-y-1.5">
                   {/* السطر العلوي للتصنيف: الاسم والنسبة والمبلغ */}
-                  <div className="flex justify-between items-center text-xs font-semibold">
+                  <div className="flex justify-between items-center text-[11px] sm:text-xs font-semibold">
                     <div className="flex items-center gap-1.5">
                       <span className={`w-2 h-2 rounded-full ${styles.bar}`} />
                       <span className="text-secondary">{category}</span>
                     </div>
                     <div className="text-gray-500">
                       <span className="font-bold text-secondary">{percentage.toFixed(1)}%</span>
-                      <span className="mx-1">({amount.toFixed(1)}$)</span>
+                      <span className="mx-0.5 sm:mx-1">({amount.toFixed(1)}$)</span>
                     </div>
                   </div>
 
                   {/* شريط التقدم البصري (Progress Bar Component) */}
-                  <div className="h-2.5 w-full overflow-hidden rounded-full bg-gray-100 dark:bg-secondary/20">
+                  <div className="h-2 sm:h-2.5 w-full overflow-hidden rounded-full bg-gray-100 dark:bg-secondary/20">
                     <div 
                       className={`h-full ${styles.bar} transition-all duration-500 ease-out`}
                       style={{ width: `${percentage}%` }}

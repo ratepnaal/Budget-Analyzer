@@ -192,44 +192,68 @@ export default function PendingBasket() {
   };
 
   return (
-    <div className="w-full rounded-3xl border border-outline-variant bg-surface p-6 shadow-sm">
-      <div className="mb-5 flex items-center justify-between">
-        <h2 className="text-xl font-bold text-secondary">الفواتير المعلقة الحالية</h2>
-        <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-bold text-primary">
+    <div className="w-full rounded-2xl sm:rounded-3xl border border-outline-variant bg-surface p-4 sm:p-6 shadow-sm">
+      <div className="mb-4 sm:mb-5 flex items-center justify-between">
+        <h2 className="text-lg sm:text-xl font-bold text-secondary">الفواتير المعلقة الحالية</h2>
+        <span className="rounded-full bg-primary/10 px-2.5 py-0.5 sm:px-3 sm:py-1 text-[10px] sm:text-xs font-bold text-primary">
           {basketItems.length} معلقة
         </span>
       </div>
 
       {basketItems.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-outline-variant py-8 text-center text-sm text-gray-400">
+        <div className="rounded-xl sm:rounded-2xl border border-dashed border-outline-variant py-6 sm:py-8 text-center text-xs sm:text-sm text-gray-400">
           السلة فارغة حالياً. أضف فواتير من النموذج لتظهر هنا قبل ترحيلها.
         </div>
       ) : (
-        <div className="space-y-4">
+        <div className="space-y-3 sm:space-y-4">
           <div className="max-h-[250px] space-y-2 overflow-y-auto">
             {basketItems.map((item) => (
-              <div key={item.id} className="flex items-center justify-between rounded-2xl border border-outline-variant/70 bg-surface p-3 text-sm dark:bg-secondary/10">
-                <div>
-                  <p className="font-semibold text-secondary">{item.title}</p>
-                  <span className="text-xs text-gray-400">{item.category}</span>
+              <div key={item.id} className="rounded-xl sm:rounded-2xl border border-outline-variant/70 bg-surface p-2.5 sm:p-3 text-sm dark:bg-secondary/10">
+                {/* Mobile: تخطيط عمودي */}
+                <div className="sm:hidden space-y-1.5">
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="min-w-0">
+                      <p className="font-semibold text-secondary text-sm truncate">{item.title}</p>
+                      <span className="text-[10px] text-gray-400">{item.category}</span>
+                    </div>
+                    <button
+                      onClick={() => dispatch(removeFromBasket(item.id))}
+                      className="shrink-0 rounded-lg px-2 py-1 text-[10px] font-bold text-error transition-colors hover:bg-error/10"
+                    >
+                      حذف
+                    </button>
+                  </div>
+                  <div className="flex items-center justify-between rounded-lg bg-surface-container px-2 py-1">
+                    <span className="font-bold text-secondary text-xs">
+                      {item.amount.toLocaleString()} {item.currency === 'SYP' ? 'ل.س' : '$'}
+                    </span>
+                  </div>
                 </div>
-                <div className="flex items-center gap-3">
-                  <p className="font-bold text-secondary">
-                    {item.amount.toLocaleString()} {item.currency === 'SYP' ? 'ل.س' : '$'}
-                  </p>
-                  <button
-                    onClick={() => dispatch(removeFromBasket(item.id))}
-                    className="rounded-lg px-2 py-1 text-xs font-bold text-error transition-colors hover:bg-error/10"
-                  >
-                    حذف
-                  </button>
+
+                {/* Desktop: تخطيط أفقي */}
+                <div className="hidden sm:flex items-center justify-between">
+                  <div>
+                    <p className="font-semibold text-secondary">{item.title}</p>
+                    <span className="text-xs text-gray-400">{item.category}</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <p className="font-bold text-secondary">
+                      {item.amount.toLocaleString()} {item.currency === 'SYP' ? 'ل.س' : '$'}
+                    </p>
+                    <button
+                      onClick={() => dispatch(removeFromBasket(item.id))}
+                      className="rounded-lg px-2 py-1 text-xs font-bold text-error transition-colors hover:bg-error/10"
+                    >
+                      حذف
+                    </button>
+                  </div>
                 </div>
               </div>
             ))}
           </div>
 
-          <div className="space-y-1.5 rounded-2xl border border-outline-variant bg-surface-container p-4 text-xs text-secondary">
-            <p className="font-bold mb-1 text-sm text-secondary">المجموع المطلوب ترحيله الخصم:</p>
+          <div className="space-y-1.5 rounded-xl sm:rounded-2xl border border-outline-variant bg-surface-container p-3 sm:p-4 text-xs text-secondary">
+            <p className="font-bold mb-1 text-xs sm:text-sm text-secondary">المجموع المطلوب ترحيله الخصم:</p>
             {totalSYP > 0 && (
               <div className="flex justify-between">
                 <span>من صندوق الليرة:</span>
@@ -246,7 +270,7 @@ export default function PendingBasket() {
 
           <button
             onClick={handleCheckout}
-            className="w-full rounded-2xl bg-primary py-3 font-bold text-slate-900 shadow-md shadow-primary/10 transition-all hover:bg-primary-dark"
+            className="w-full rounded-xl sm:rounded-2xl bg-primary py-2.5 sm:py-3 text-sm sm:text-base font-bold text-slate-900 shadow-md shadow-primary/10 transition-all hover:bg-primary-dark"
           >
             ترحيل وتأكيد خصم الفواتير المعلقة
           </button>

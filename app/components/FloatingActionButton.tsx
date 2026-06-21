@@ -12,7 +12,7 @@ export default function FloatingActionButton({ hidden = false }: FloatingActionB
   return (
     <Link
       href="/invoice-manage"
-      className="fixed bottom-5 left-5 z-40 inline-flex h-14 w-14 items-center justify-center rounded-full bg-primary text-white shadow-xl shadow-primary/25 transition hover:scale-105 hover:bg-primary-dark"
+      className="fixed bottom-20 left-4 z-40 inline-flex h-14 w-14 items-center justify-center rounded-full bg-primary text-white shadow-xl shadow-primary/25 transition hover:scale-105 hover:bg-primary-dark lg:bottom-5 lg:left-5"
       aria-label="إضافة فاتورة"
       title="إضافة فاتورة"
     >

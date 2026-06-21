@@ -25,26 +25,26 @@ export default function LoansPage() {
   };
 
   return (
-    <main className="space-y-6">
-      <section className="rounded-[28px] border border-outline-variant bg-surface p-8 shadow-sm">
+    <main className="space-y-4 sm:space-y-6">
+      <section className="rounded-2xl sm:rounded-[28px] border border-outline-variant bg-surface p-4 sm:p-8 shadow-sm">
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div>
-            <p className="text-sm text-gray-500">رصيد صندوق القروض</p>
-            <h2 className="mt-2 text-4xl font-bold text-error">-{loansBalance.toLocaleString()} $</h2>
+            <p className="text-xs sm:text-sm text-gray-500">رصيد صندوق القروض</p>
+            <h2 className="mt-1.5 sm:mt-2 text-2xl sm:text-4xl font-bold text-error">-{loansBalance.toLocaleString()} $</h2>
           </div>
 
-          <form onSubmit={handleTakeLoan} className="flex flex-col gap-3 md:flex-row md:items-end">
-            <div>
-              <label className="mb-1 block text-sm font-medium text-secondary">مبلغ القرض</label>
+          <form onSubmit={handleTakeLoan} className="flex flex-col gap-3 sm:flex-row sm:items-end">
+            <div className="flex-1 sm:flex-none">
+              <label className="mb-1 block text-xs sm:text-sm font-medium text-secondary">مبلغ القرض</label>
               <input
                 type="number"
                 value={loanAmount}
                 onChange={(e) => setLoanAmount(e.target.value)}
-                className="w-full rounded-2xl border border-outline-variant bg-surface p-3 outline-none focus:border-primary dark:bg-secondary/10"
+                className="w-full rounded-xl sm:rounded-2xl border border-outline-variant bg-surface p-2.5 sm:p-3 outline-none focus:border-primary dark:bg-secondary/10"
                 placeholder="0"
               />
             </div>
-            <button type="submit" className="rounded-2xl bg-secondary px-5 py-3 font-bold text-surface transition hover:opacity-90">
+            <button type="submit" className="w-full sm:w-auto rounded-xl sm:rounded-2xl bg-secondary px-5 py-2.5 sm:py-3 font-bold text-surface transition hover:opacity-90">
               سحب قرض
             </button>
           </form>

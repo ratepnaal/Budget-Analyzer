@@ -32,7 +32,7 @@ export default function ToastCenter() {
   if (notifications.length === 0) return null;
 
   return (
-    <div className="fixed bottom-5 left-1/2 z-50 flex w-[min(92vw,24rem)] -translate-x-1/2 flex-col gap-3">
+    <div className="fixed bottom-20 lg:bottom-5 left-1/2 z-50 flex w-[min(92vw,24rem)] -translate-x-1/2 flex-col gap-2 sm:gap-3">
       {notifications.slice(-3).map((notification) => (
         <div
           key={notification.id}
